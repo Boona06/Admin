@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 const Users = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
-
   const [data, setData] = useState([]);
 
   useEffect(() => {
