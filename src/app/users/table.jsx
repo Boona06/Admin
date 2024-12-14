@@ -14,14 +14,24 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MoreHorizontal, Settings } from "lucide-react";
+import { Filter, MoreHorizontal, Settings, Slice } from "lucide-react";
+import { UserEditDialog } from "./user-edit-dialog";
+import { useState } from "react";
+import { Link } from "next";
 
 export function UsersTable(props) {
-  const { data } = props;
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("");
+  const { data, limit } = props;
+  const [search , setSearch]= useState("");
+  const dataFilter= data?.filter((el) =>el.firstname.includes(search) )
+
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input placeholder="Нэрээр хайх..." className="max-w-sm" />
+        <Input onChange={(e) => {setSearch(e.target.value)}} placeholder="Нэрээр хайх..." className="max-w-sm"  />
+        
       </div>
       <div className="border rounded-md">
         <Table>
@@ -38,7 +48,7 @@ export function UsersTable(props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.map((item, index) => (
+            {dataFilter?.slice(0, limit).map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableHead>
@@ -62,7 +72,10 @@ export function UsersTable(props) {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => navigator.clipboard.writeText(item.email)}>Copy Email</DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem >Edit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                        setCreateModalOpen(true);
+                        setSelectedItem(item)
+                      }} >Edit</DropdownMenuItem>
                       <DropdownMenuItem onClick={async() => {
                         await fetch(`api/users/${item.id}`,{method: "DELETE"})
                       }}>Delete</DropdownMenuItem>
@@ -71,6 +84,7 @@ export function UsersTable(props) {
                 </TableHead>
               </TableRow>
             ))}
+            <UserEditDialog item={selectedItem} open={createModalOpen} onClose={setCreateModalOpen} />
           </TableBody>
         </Table>
       </div>

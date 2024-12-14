@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 const Users = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [limit , serLimit] = useState(10)
+
 
   useEffect(() => {
     fetch("/api/users")
@@ -31,9 +33,9 @@ const Users = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <UsersTable data={data} />
+          <UsersTable data={data} limit={limit}/>
           <div className="flex justify-center p-8">
-            <Button variant="outline">Load more...</Button>
+            <Button variant="outline" onClick={ () => serLimit(limit+2)}>Load more...</Button>
           </div>
         </CardContent>
       </Card>
